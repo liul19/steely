@@ -1,2 +1,166 @@
-# steely
-attendance 
+<!doctype html>
+<html lang="am">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Attendance Time Keeper</title>
+<style>
+:root{color-scheme:light;--page-bg:#f3f6fa;--panel-bg:#ffffff;--text:#182230;--muted:#64748b;--line:#e0e6ee;--table-bg:#ffffff;--thead-bg:#eaf1f8;--sticky-bg:#f8fafc;--input-bg:#ffffff;--input-text:#182230;--button-secondary-bg:#ffffff;--button-secondary-text:#24364b;--login-bg:#edf2f8;--login-card-bg:#ffffff;font-family:Arial,"Noto Sans Ethiopic",sans-serif;color:var(--text);background:var(--page-bg)}
+body{background:var(--page-bg);color:var(--text)}
+body.dark-mode{color-scheme:dark;--page-bg:#101722;--panel-bg:#182333;--text:#e7edf5;--muted:#a7b4c6;--line:#344257;--table-bg:#182333;--thead-bg:#24344a;--sticky-bg:#1d2a3b;--input-bg:#111b29;--input-text:#e7edf5;--button-secondary-bg:#26364b;--button-secondary-text:#e7edf5;--login-bg:#101722;--login-card-bg:#182333}
+body.dark-mode header{background:#0d2038}
+body.dark-mode .panel,body.dark-mode .stat,body.dark-mode .login-card{background:var(--panel-bg);border-color:var(--line);color:var(--text)}
+body.dark-mode .stat small,body.dark-mode .muted,body.dark-mode .notice{color:var(--muted)}
+body.dark-mode input,body.dark-mode select,body.dark-mode .employee-name,body.dark-mode .department-input,body.dark-mode .login-card input{background:var(--input-bg);color:var(--input-text);border-color:var(--line)}
+body.dark-mode .secondary{background:var(--button-secondary-bg);color:var(--button-secondary-text);border-color:var(--line)}
+body.dark-mode .user-chip{background:#263b56;color:#e1edff}
+body.dark-mode .tablewrap{border-color:var(--line)}
+body.dark-mode table{background:var(--table-bg);color:var(--text)}
+body.dark-mode th,body.dark-mode td{border-color:var(--line)}
+body.dark-mode thead th,body.dark-mode thead th:first-child,body.dark-mode thead th:nth-child(2){background:var(--thead-bg);color:var(--text)}
+body.dark-mode th:first-child,body.dark-mode td:first-child,body.dark-mode th:nth-child(2),body.dark-mode td:nth-child(2){background:var(--sticky-bg);color:var(--text)}
+body.dark-mode .daybtn.off{background:#263449;color:#c0cada;border-color:#3b4b61}
+body.dark-mode .daybtn.present{background:#174b36;color:#b9f6d2;border-color:#287a55}
+body.dark-mode .daybtn.absent{background:#5b252b;color:#ffd4d4;border-color:#9b414b}
+body.dark-mode .daybtn.leave{background:#5a471c;color:#ffe6a1;border-color:#92732c}
+body.dark-mode th.sunday{background:#5b252b!important;color:#ffd4d4!important}body.dark-mode td.sunday-cell{background:#351f2a}
+body.dark-mode .login-overlay{background:var(--login-bg)}
+body.dark-mode .login-card h2{color:#b8d3ff}
+body.dark-mode .period,body.dark-mode .msg{background:#223652;color:#dce9ff}
+body.dark-mode .login-error{color:#ffb4ad}
+
+*{box-sizing:border-box}body{margin:0;padding:18px}header{background:#163b65;color:white;padding:18px 20px;border-radius:14px;margin-bottom:16px}
+h1{margin:0 0 6px;font-size:24px}header p{margin:0;color:#dce9f7}.panel{background:white;border:1px solid #e0e6ee;border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 2px 8px #14213d0b}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.controls input,.controls select,button{font:inherit;border:1px solid #cbd5e1;border-radius:8px;padding:9px 11px;background:white}
+button{cursor:pointer;background:#164e83;color:white;border-color:#164e83}button.secondary{background:white;color:#24364b;border-color:#cbd5e1}button.danger{background:#a32c38;border-color:#a32c38}
+input[type=text],input[type=number]{min-width:130px}.stats{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:10px;margin-bottom:14px}.stat{background:white;border:1px solid #e0e6ee;border-radius:12px;padding:14px}.stat small{color:#64748b}.stat strong{display:block;font-size:24px;margin-top:5px}
+.tablewrap{overflow:auto;max-height:65vh;border:1px solid #dbe3ed;border-radius:10px}table{border-collapse:separate;border-spacing:0;background:white;min-width:100%;white-space:nowrap}th,td{border-right:1px solid #e4eaf1;border-bottom:1px solid #e4eaf1;text-align:center;padding:8px 7px}thead th{position:sticky;top:0;background:#eaf1f8;z-index:2}th:first-child,td:first-child{position:sticky;left:0;z-index:1;background:#f8fafc}th:nth-child(2),td:nth-child(2){position:sticky;left:58px;z-index:1;background:#f8fafc}thead th:first-child,thead th:nth-child(2){z-index:3;background:#eaf1f8}.idcol{min-width:58px}.namecol{min-width:150px;text-align:left}.daybtn{width:34px;height:34px;padding:0;border-radius:7px;background:#f1f5f9;color:#64748b;border:1px solid #dbe3ed}.daybtn.present{background:#dcfce7;color:#166534;border-color:#86efac}.daybtn.absent{background:#fee2e2;color:#991b1b;border-color:#fca5a5}.daybtn.leave{background:#fef3c7;color:#92400e;border-color:#fcd34d}.daybtn.off{background:#f1f5f9;color:#64748b}.daybtn:disabled{opacity:.58;cursor:not-allowed;filter:grayscale(.35)}th.sunday{background:#fee2e2!important;color:#b91c1c!important;font-weight:700}td.sunday-cell{background:#fff1f2}.employee-name{width:145px;min-width:110px;padding:6px;border:1px solid #d5deea;border-radius:6px}.department-input{width:135px;min-width:110px;padding:6px;border:1px solid #d5deea;border-radius:6px}.summary{font-weight:bold;min-width:62px}.muted{color:#64748b;font-size:13px}.legend span{display:inline-block;margin-right:12px}.notice{color:#475569;font-size:13px;margin-top:10px}
+@media(max-width:600px){body{padding:9px}h1{font-size:20px}.stats{grid-template-columns:repeat(3,1fr);gap:6px}.stat{padding:9px}.stat strong{font-size:19px}.panel{padding:10px}}
+@media print{body,body.dark-mode{background:#fff!important;color:#000!important;--page-bg:#fff;--panel-bg:#fff;--text:#000;--muted:#444;--line:#ddd;--table-bg:#fff;--thead-bg:#eee;--sticky-bg:#fff;--input-bg:#fff;--input-text:#000}#themeToggle{display:none!important}}
+
+.login-overlay{position:fixed;inset:0;background:#edf2f8;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px}.login-card{background:white;border:1px solid #dbe3ed;border-radius:16px;padding:24px;width:min(420px,100%);box-shadow:0 12px 40px #163b6520}.login-card h2{margin:0 0 8px;color:#163b65}.login-card label{display:block;margin:12px 0 5px;font-size:14px}.login-card input{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}.login-card button{width:100%;margin-top:16px}.login-error{color:#b91c1c;font-size:13px;min-height:18px}.user-chip{background:#eaf1f8;color:#163b65;border-radius:999px;padding:7px 11px;font-size:13px;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="login-overlay" id="loginOverlay">
+ <form class="login-card" id="loginForm">
+  <h2>Attendance Login</h2><p class="muted">Username እና Password</p>
+  <label for="loginUsername">Username</label><input id="loginUsername" autocomplete="username" required>
+  <label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required>
+  <div class="login-error" id="loginError" role="alert"></div><button type="submit">Login / ግባ</button>
+  
+ </form>
+</div>
+<header><div class="controls" style="justify-content:space-between"><div><h1>Attendance</h1><p>የሠራተኞች መገኘት</p></div><div class="controls"><button type="button" class="secondary" id="themeToggle" aria-pressed="false">🌙 Night mode</button><span class="user-chip" id="currentUser"></span><button type="button" class="secondary" id="logout">Logout</button></div></div></header>
+<section class="panel">
+<div class="controls">
+<label>ወር <input id="month" type="month"></label>
+<label>ID <input id="newId" type="text" placeholder="ለምሳሌ 1860"></label>
+<label>ስም <input id="newName" type="text" placeholder="የሠራተኛ ስም"></label>
+<label>Department <input id="newDepartment" type="text" placeholder="ለምሳሌ IT"></label>
+<button id="add">+ ሠራተኛ ጨምር</button>
+<button id="saveNow">💾 መረጃ Save አድርግ</button>
+<span id="saveStatus" class="muted" role="status">Auto-save ንቁ ነው</span>
+<button class="secondary" id="export">Excel / CSV አውርድ</button>
+<button class="secondary" id="print">Print</button>
+</div>
+
+</section>
+<div class="stats">
+<div class="stat"><small>ጠቅላላ ሠራተኞች</small><strong id="total">0</strong></div>
+<div class="stat"><small>Present</small><strong id="presentTotal">0</strong></div>
+<div class="stat"><small>Absent</small><strong id="absentTotal">0</strong></div>
+<div class="stat"><small>Annual Leave</small><strong id="leaveTotal">0</strong></div>
+</div>
+<section class="panel">
+<div class="controls" style="justify-content:space-between;margin-bottom:10px">
+<div class="controls"><strong id="monthTitle">Attendance</strong><label>ሰራተኛ ፈልግ (ID / ስም) <input id="employeeSearch" type="search" placeholder="ID ወይም ስም ጻፍ…"></label><label>Department <select id="departmentFilter"><option value="*">ሁሉም Department</option></select></label><button type="button" class="secondary" id="clearSearch">አጽዳ</button><button type="button" class="secondary" id="togglePastDays" aria-label="ያለፉና ወደፊት ቀናትን ደብቅ" title="ያለፉና ወደፊት ቀናትን ደብቅ">🙈</button></div>
+<div class="legend"><span>✓</span><span>✗</span><span>AL</span><span>·</span></div>
+</div>
+<div class="tablewrap"><table id="attendance"></table></div>
+
+</section>
+<script>
+const $=id=>document.getElementById(id);
+const THEME_KEY='attendance-timekeeper-theme-v1';
+function setTheme(theme){
+  const dark=theme==='dark';
+  document.body.classList.toggle('dark-mode',dark);
+  const btn=$('themeToggle');
+  if(btn){btn.textContent=dark?'☀️ Light mode':'🌙 Night mode';btn.setAttribute('aria-pressed',String(dark));}
+  try{localStorage.setItem(THEME_KEY,dark?'dark':'light')}catch{}
+}
+try{setTheme(localStorage.getItem(THEME_KEY)==='dark'?'dark':'light')}catch{setTheme('light')}
+$('themeToggle').addEventListener('click',()=>setTheme(document.body.classList.contains('dark-mode')?'light':'dark'));
+let currentRole='',currentUsername='';
+const demoAccounts={admin:{password:'Admin123!',role:'admin'},user:{password:'User123!',role:'user'}};
+function applyRole(){
+ const admin=currentRole==='admin';
+ ['newId','newName','newDepartment','add'].forEach(id=>{const el=$(id);if(el){el.disabled=!admin;el.title=admin?'':'Admin ብቻ ይህን ማስተካከል ይችላል'}});
+ $('currentUser').textContent=`${currentUsername} (${currentRole.toUpperCase()})`;
+ $('roleNotice').textContent=admin
+  ? 'ADMIN ፈቃድ፦ ሠራተኛ መጨመር፣ ስም/Department ማስተካከል፣ መሰረዝ፣ የቀድሞ ቀናት Attendance ማስተካከል፣ ሪፖርት ማውረድ።'
+  : 'USER ፈቃድ፦ Attendance ማየት፣ የዛሬ Attendance መመዝገብ፣ ወደፊት ቀናት Annual Leave ማስመዝገብ፣ CSV ማውረድና Print። ሠራተኛ መጨመር/መሰረዝ፣ ስም/Department ወይም ያለፉ ቀናት ማስተካከል አይችልም።';
+ render();
+}
+$('loginForm').addEventListener('submit',e=>{e.preventDefault();const username=$('loginUsername').value.trim();const password=$('loginPassword').value;const account=demoAccounts[username];if(!account||account.password!==password){$('loginError').textContent='Username ወይም Password ትክክል አይደለም።';return}currentUsername=username;currentRole=account.role;$('loginOverlay').style.display='none';applyRole();});
+$('logout').addEventListener('click',()=>{currentRole='';currentUsername='';$('loginPassword').value='';$('loginOverlay').style.display='flex';$('loginError').textContent='';});
+const now=new Date(); $('month').value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+const key=()=>`timekeeper-v1-${$('month').value}`;
+let employees=[];let showPastDays=true;
+function periodDates(){const [y,m]=$('month').value.split('-').map(Number);const out=[];for(let d=24;d<=new Date(y,m,0).getDate();d++)out.push(new Date(y,m-1,d));for(let d=1;d<=23;d++)out.push(new Date(y,m,d));return out}
+function dateKey(date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`}
+function fmtDate(date){return `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}`}
+function load(){try{employees=JSON.parse(localStorage.getItem(key())||'[]')}catch{employees=[]}
+// Migrate older day-number attendance into the 24th–23rd date-key format.
+employees.forEach(e=>{if(e.days){const migrated={};Object.keys(e.days).forEach(k=>{if(/^\d+$/.test(k)){const d=Number(k);const [y,m]=$('month').value.split('-').map(Number);const dt=d>=24?new Date(y,m-1,d):new Date(y,m,d);migrated[dateKey(dt)]=e.days[k]}else migrated[k]=e.days[k]});e.days=migrated}});
+if(!employees.length && !localStorage.getItem(key())) employees=[{id:'1860',name:'Lili',department:'General',days:{}},{id:'1881',name:'Alfa',department:'General',days:{}}];render()}
+
+function publishPresent(){
+ try{
+  const month=$('month').value;
+  const present=[];
+  const dates=periodDates();
+  employees.forEach(e=>{
+   const found=dates.filter(d=>e.days && e.days[dateKey(d)]==='P');
+   if(found.length) present.push({
+    id:e.id, name:e.name, department:e.department||'General',
+    presentDates:found.map(d=>dateKey(d)),
+    days:e.days||{}
+   });
+  });
+  localStorage.setItem(`timekeeper-present-v1-${month}`,JSON.stringify(present));
+  localStorage.setItem('timekeeper-present-current-month',month);
+ }catch(err){console.warn('Present list sync failed',err)}
+}
+
+function save(){try{localStorage.setItem(key(),JSON.stringify(employees));publishPresent();if($('saveStatus'))$('saveStatus').textContent='✓ በBrowser ተቀምጧል';return true}catch(err){if($('saveStatus'))$('saveStatus').textContent='Save አልተሳካም';alert('መረጃውን ማስቀመጥ አልተቻለም። Browser storage እንዳለ ያረጋግጡ።');return false}}
+function daysInMonth(){return periodDates().length}
+function render(){
+publishPresent();
+const dates=periodDates();const today=new Date();today.setHours(0,0,0,0);const [sy,sm]=$('month').value.split('-').map(Number);const end=new Date(sy,sm,23);$('monthTitle').textContent=`${fmtDate(dates[0])} – ${fmtDate(dates[dates.length-1])} (${dates.length} ቀናት)`;
+const filter=$('departmentFilter')?.value||'*';const search=($('employeeSearch')?.value||'').trim().toLocaleLowerCase();const departments=[...new Set(employees.map(e=>(e.department||'General').trim()).filter(Boolean))].sort();if($('departmentFilter')){$('departmentFilter').innerHTML='<option value="*">ሁሉም Department</option>'+departments.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join('');$('departmentFilter').value=departments.includes(filter)||filter==='*'?filter:'*'}
+let html='<thead><tr><th class="idcol">ID</th><th class="namecol">Name</th><th>Department</th>';
+for(const dt of dates){const hd=new Date(dt);hd.setHours(0,0,0,0);if(!showPastDays&&hd.getTime()!==today.getTime())continue;const sunday=dt.getDay()===0;html+=`<th class="${sunday?'sunday':''}" title="${sunday?'እሁድ — Attendance Disabled':''}">${sunday?'🔴 ':''}${fmtDate(dt)}</th>`}
+html+='<th>Present</th><th>Absent</th><th>Annual Leave</th><th>Action</th></tr></thead><tbody>';
+let ptotal=0,atotal=0,ltotal=0;const todayKeyForTotals=dateKey(new Date());
+employees.forEach((e,i)=>{if(filter!=='*'&&(e.department||'General')!==filter)return;if(search&&!String(e.id).toLocaleLowerCase().includes(search)&&!String(e.name).toLocaleLowerCase().includes(search))return;const todayKey=dateKey(new Date());const todayStatus=(e.days&&e.days[todayKey])||'';let p=todayStatus==='P'?1:0,a=todayStatus==='A'?1:0,l=todayStatus==='L'?1:0;html+=`<tr><td>${esc(e.id)}</td><td><input class="employee-name" aria-label="ስም" data-name="${i}" value="${esc(e.name)}" ${currentRole!=='admin'?'readonly':''}></td><td><input class="department-input" aria-label="Department" data-department="${i}" value="${esc(e.department||'General')}" ${currentRole!=='admin'?'readonly':''}></td>`;
+for(const dt of dates){const dk=dateKey(dt);let v=e.days[dk]||'';const sunday=dt.getDay()===0;const cellDate=new Date(dt);cellDate.setHours(0,0,0,0);const past=cellDate.getTime()<today.getTime();const future=cellDate.getTime()>today.getTime();if(!showPastDays&&(past||future))continue;html+=`<td class="${sunday?'sunday-cell':''}"><button class="daybtn ${sunday?'off':v==='P'?'present':v==='A'?'absent':v==='L'?'leave':'off'}" data-date="${dk}" data-emp="${i}" ${(sunday||past&&currentRole!=='admin')?'disabled':''} title="${sunday?'እሁድ — Attendance መመዝገብ አይቻልም':dk+(past&&currentRole!=='admin'?' — User ላይ ያለፈ ቀን ተቆልፏል':past?' — Admin ያስተካክላል':future?' — ወደፊት ቀን፦ Annual Leave ብቻ ይፈቀዳል':' — Present/Absent/Annual Leave')}">${sunday?'🔒':v==='P'?'✓':v==='A'?'✗':v==='L'?'AL':'·'}</button></td>`}
+const statusForToday=(e.days&&e.days[todayKeyForTotals])||'';ptotal+=statusForToday==='P'?1:0;atotal+=statusForToday==='A'?1:0;ltotal+=statusForToday==='L'?1:0;html+=`<td class="summary">${p}</td><td class="summary">${a}</td><td class="summary">${l}</td><td>${currentRole==='admin'?`<button class="danger" data-delete="${i}">ሰርዝ</button>`:'—'}</td></tr>`});
+if(!employees.length)html+=`<tr><td colspan="${dates.length+6}">ሠራተኛ አልተጨመረም</td></tr>`;else if(!html.includes('<tr><td>'))html+=`<tr><td colspan="${dates.length+6}">ከዚህ ፍለጋ / Department ጋር የሚዛመድ ሠራተኛ የለም</td></tr>`;
+html+='</tbody>';$('attendance').innerHTML=html;$('total').textContent=employees.length;$('presentTotal').textContent=ptotal;$('absentTotal').textContent=atotal;if($('leaveTotal'))$('leaveTotal').textContent=ltotal;
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('saveNow').onclick=()=>{if(save()){const b=$('saveNow');b.textContent='✓ Saved';setTimeout(()=>{b.textContent='💾 መረጃ Save አድርግ'},1600)}};
+$('add').onclick=()=>{let id=$('newId').value.trim(),name=$('newName').value.trim(),department=$('newDepartment').value.trim()||'General';if(!id||!name){alert('ID እና ስም አስገባ።');return}if(employees.some(e=>e.id===id)){alert('ይህ ID አስቀድሞ አለ።');return}employees.push({id,name,department,days:{}});$('newId').value='';$('newName').value='';$('newDepartment').value='';save();render()};
+$('attendance').addEventListener('click',e=>{let b=e.target.closest('button');if(!b)return;if(b.dataset.date){const dk=b.dataset.date;const cellDate=new Date(dk+'T00:00:00');if(cellDate.getDay()===0){alert('እሁድ ቀናት Attendance መመዝገብ አይቻልም።');return}const today=new Date();today.setHours(0,0,0,0);let emp=employees[+b.dataset.emp],v=emp.days[dk]||'';if(cellDate.getTime()<today.getTime()&&currentRole!=='admin'){alert('ያለፉ ቀናትን ማስተካከል Admin ብቻ ይችላል።');return}if(cellDate.getTime()>today.getTime()){if(v==='L')delete emp.days[dk];else emp.days[dk]='L'}else{emp.days[dk]=v===''?'P':v==='P'?'A':v==='A'?'L':'';if(!emp.days[dk])delete emp.days[dk]}save();render()}if(b.dataset.delete!==undefined){if(currentRole!=='admin'){alert('ሠራተኛን መሰረዝ Admin ብቻ ይችላል።');return}let i=+b.dataset.delete;if(confirm(`${employees[i].name} እንዲሰረዝ ትፈልጋለህ?`)){employees.splice(i,1);save();render()}}});
+$('attendance').addEventListener('change',e=>{if(e.target.dataset.name!==undefined){if(currentRole!=='admin'){render();alert('ስም መቀየር Admin ብቻ ይችላል።');return}employees[+e.target.dataset.name].name=e.target.value.trim()||'Unnamed';save();render()}if(e.target.dataset.department!==undefined){if(currentRole!=='admin'){render();alert('Department መቀየር Admin ብቻ ይችላል።');return}employees[+e.target.dataset.department].department=e.target.value.trim()||'General';save();render()}});
+$('departmentFilter').addEventListener('change',render);
+$('employeeSearch').addEventListener('input',render);
+$('clearSearch').addEventListener('click',()=>{$('employeeSearch').value='';render();$('employeeSearch').focus()});
+$('togglePastDays').addEventListener('click',()=>{showPastDays=!showPastDays;const b=$('togglePastDays');b.textContent=showPastDays?'🙈':'👁️';b.title=showPastDays?'ያለፉና ወደፊት ቀናትን ደብቅ':'ሁሉንም ቀናት አሳይ';b.setAttribute('aria-label',b.title);render()});
+$('month').onchange=load;
+$('export').onclick=()=>{const dates=periodDates(),rows=[['ID','Name','Department',...dates.map(fmtDate),'Present days','Absent days','Annual Leave days']];employees.forEach(e=>{let p=0,a=0,l=0,vals=[];for(const dt of dates){let v=e.days[dateKey(dt)]||'';if(dt.getDay()===0)v='';vals.push(v==='P'?'Present':v==='A'?'Absent':v==='L'?'Annual Leave':'');if(v==='P')p++;if(v==='A')a++;if(v==='L')l++}rows.push([e.id,e.name,e.department||'General',...vals,p,a,l])});let csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');let blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`attendance-${$('month').value}-24-to-23.csv`;a.click();URL.revokeObjectURL(url)};
+$('print').onclick=()=>window.print();
+load();
+</script>
+</body></html>
